@@ -2,14 +2,16 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
 import Bird from "./bird";
 import Pipe from "./pipe";
 import GameOverScreen from "./game-over-screen";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 // Game Constants
 const GAME_WIDTH = 500;
 const GAME_HEIGHT = 700;
-const BIRD_SIZE = 30;
+const BIRD_SIZE = 40; // Match the new bird size
 const BIRD_LEFT = 100;
 const GRAVITY = 0.5;
 const JUMP_STRENGTH = 9;
@@ -20,6 +22,8 @@ const PIPE_SPAWN_INTERVAL = 120; // in frames
 
 type GameState = "start" | "playing" | "gameOver";
 type PipeState = { x: number; topPipeHeight: number; passed?: boolean };
+
+const jungleBg = PlaceHolderImages.find(p => p.id === 'jungle-background');
 
 const Game = () => {
   const [gameState, setGameState] = useState<GameState>("start");
@@ -135,7 +139,6 @@ const Game = () => {
       style={{
         width: `${GAME_WIDTH}px`,
         height: `${GAME_HEIGHT}px`,
-        backgroundColor: 'hsl(var(--background))',
         borderColor: 'hsl(var(--accent-foreground))'
       }}
       role="application"
@@ -143,18 +146,28 @@ const Game = () => {
       onClick={handleTap}
       onTouchStart={handleTap}
     >
+      {jungleBg && (
+        <Image
+            src={jungleBg.imageUrl}
+            alt={jungleBg.description}
+            data-ai-hint={jungleBg.imageHint}
+            fill
+            style={{ objectFit: 'cover', zIndex: -1 }}
+            priority
+        />
+      )}
       <Bird top={birdPos} rotation={birdRotation} />
       {pipes.map((pipe, index) => (
         <Pipe key={index} x={pipe.x} topPipeHeight={pipe.topPipeHeight} />
       ))}
       
-      <div className="absolute top-4 right-4 text-4xl font-bold font-headline z-10" style={{color: 'hsl(var(--accent-foreground))'}}>
+      <div className="absolute top-4 right-4 text-4xl font-bold font-headline z-10 text-white" style={{WebkitTextStroke: '2px black'}}>
         {score}
       </div>
 
       {gameState === 'start' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center">
-            <p className="text-2xl font-bold font-headline mt-10" style={{color: 'hsl(var(--primary-foreground))'}}>Tap to Start</p>
+            <p className="text-2xl font-bold font-headline mt-10 text-white" style={{WebkitTextStroke: '1px black'}}>Tap to Start</p>
         </div>
       )}
 
