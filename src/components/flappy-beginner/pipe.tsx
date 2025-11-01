@@ -11,6 +11,11 @@ interface PipeProps {
 }
 
 const Branch: FC<{ height: number, className?: string }> = ({ height, className }) => {
+  // Use a unique ID for gradients and filters to avoid conflicts when multiple SVGs are on the page.
+  const uniqueId = Math.random().toString(36).substring(2);
+  const barkGradientId = `barkGradient-${uniqueId}`;
+  const barkTextureId = `barkTexture-${uniqueId}`;
+
   return (
     <svg 
       width={PIPE_WIDTH} 
@@ -24,31 +29,40 @@ const Branch: FC<{ height: number, className?: string }> = ({ height, className 
       }}
     >
       <defs>
-        <linearGradient id="barkGradient" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#8B5E3C" />
-          <stop offset="50%" stopColor="#69452b" />
-          <stop offset="100%" stopColor="#8B5E3C" />
+        <linearGradient id={barkGradientId} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#A0522D" /> 
+          <stop offset="20%" stopColor="#8B4513" />
+          <stop offset="50%" stopColor="#5E2C04" />
+          <stop offset="80%" stopColor="#8B4513" />
+          <stop offset="100%" stopColor="#A0522D" />
         </linearGradient>
-        <filter id="barkTexture">
-          <feTurbulence type="fractalNoise" baseFrequency="0.1 0.02" numOctaves="3" result="noise" />
-          <feDiffuseLighting in="noise" lightingColor="#a37e58" surfaceScale="2" result="light">
-            <feDistantLight azimuth="45" elevation="60" />
-          </feDiffuseLighting>
-          <feComposite in="light" in2="SourceGraphic" operator="in" />
+        <filter id={barkTextureId}>
+            <feTurbulence type="fractalNoise" baseFrequency="0.05 0.015" numOctaves="4" seed="10" result="noise" />
+            <feDiffuseLighting in="noise" lightingColor="#bfa38f" surfaceScale="3" result="light">
+                <feDistantLight azimuth="45" elevation="50" />
+            </feDiffuseLighting>
+            <feComposite in="light" in2="SourceGraphic" operator="in" result="textured"/>
+            <feGaussianBlur in="textured" stdDeviation="0.5" result="blurred" />
+            <feBlend in="textured" in2="blurred" mode="multiply" />
         </filter>
       </defs>
+      {/* Base branch shape */}
       <path
-        d={`M10,0 C0,${height * 0.2} 20,${height * 0.4} 15,${height * 0.6} C10,${height * 0.8} 30,${height * 0.9} 20,${height} H60 C70,${height * 0.9} 50,${height * 0.8} 65,${height * 0.6} C80,${height * 0.4} 60,${height * 0.2} 70,0 Z`}
-        fill="url(#barkGradient)"
-        stroke="#5D3A1F"
-        strokeWidth="4"
+        d={`M10,0 C-5,${height * 0.25} 25,${height * 0.3} 15,${height * 0.6} C5,${height * 0.9} 35,${height * 0.95} 20,${height} H60 C75,${height * 0.95} 45,${height * 0.9} 65,${height * 0.6} C85,${height * 0.3} 55,${height * 0.25} 70,0 Z`}
+        fill={`url(#${barkGradientId})`}
+        stroke="#4A2511"
+        strokeWidth="3"
       />
+      {/* Apply texture overlay */}
       <path
-        d={`M10,0 C0,${height * 0.2} 20,${height * 0.4} 15,${height * 0.6} C10,${height * 0.8} 30,${height * 0.9} 20,${height} H60 C70,${height * 0.9} 50,${height * 0.8} 65,${height * 0.6} C80,${height * 0.4} 60,${height * 0.2} 70,0 Z`}
+        d={`M10,0 C-5,${height * 0.25} 25,${height * 0.3} 15,${height * 0.6} C5,${height * 0.9} 35,${height * 0.95} 20,${height} H60 C75,${height * 0.95} 45,${height * 0.9} 65,${height * 0.6} C85,${height * 0.3} 55,${height * 0.25} 70,0 Z`}
         fill="transparent"
-        filter="url(#barkTexture)"
-        style={{mixBlendMode: 'overlay', opacity: 0.3}}
+        filter={`url(#${barkTextureId})`}
+        style={{mixBlendMode: 'overlay', opacity: 0.6}}
       />
+       {/* Highlight and shadow lines to add depth */}
+      <path d={`M15,5 C10,${height * 0.3} 22,${height * 0.4} 18,${height * 0.6}`} fill="none" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="2" />
+      <path d={`M65,5 C70,${height * 0.3} 58,${height * 0.4} 62,${height * 0.6}`} fill="none" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="2" />
     </svg>
   )
 }
