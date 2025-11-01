@@ -23,7 +23,7 @@ const PIPE_SPAWN_INTERVAL = 120; // in frames
 type GameState = "start" | "playing" | "gameOver";
 type PipeState = { x: number; topPipeHeight: number; passed?: boolean };
 
-const jungleBg = PlaceHolderImages.find(p => p.id === 'jungle-background');
+const jungleBg = PlaceHolderImages.find(p => p.id === 'jungle-background-2');
 
 const Game = () => {
   const [gameState, setGameState] = useState<GameState>("start");
@@ -135,11 +135,12 @@ const Game = () => {
 
   return (
     <div
-      className="relative overflow-hidden border-4 shadow-lg cursor-pointer"
+      className="relative overflow-hidden border-8 shadow-lg cursor-pointer"
       style={{
         width: `${GAME_WIDTH}px`,
         height: `${GAME_HEIGHT}px`,
-        borderColor: 'hsl(var(--accent-foreground))'
+        borderColor: 'hsl(var(--primary))',
+        borderStyle: 'outset',
       }}
       role="application"
       aria-label="FlappyBeginner Game"
