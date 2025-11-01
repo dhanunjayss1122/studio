@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -54,9 +55,8 @@ const Game = () => {
     setBirdRotation(0);
   }, []);
 
-  const handleKeyPress = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.code !== "Space") return;
+  const handleTap = useCallback(
+    (e: React.MouseEvent | React.TouchEvent) => {
       e.preventDefault();
       
       if (gameState === "start") {
@@ -68,13 +68,6 @@ const Game = () => {
     [gameState, startGame, jump]
   );
   
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress);
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [handleKeyPress]);
-
   const gameLoop = useCallback(() => {
     if (gameState === "playing") {
       // Bird physics
@@ -138,7 +131,7 @@ const Game = () => {
 
   return (
     <div
-      className="relative overflow-hidden border-4 shadow-lg"
+      className="relative overflow-hidden border-4 shadow-lg cursor-pointer"
       style={{
         width: `${GAME_WIDTH}px`,
         height: `${GAME_HEIGHT}px`,
@@ -147,6 +140,8 @@ const Game = () => {
       }}
       role="application"
       aria-label="FlappyBeginner Game"
+      onClick={handleTap}
+      onTouchStart={handleTap}
     >
       <Bird top={birdPos} rotation={birdRotation} />
       {pipes.map((pipe, index) => (
@@ -158,8 +153,8 @@ const Game = () => {
       </div>
 
       {gameState === 'start' && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center" onClick={startGame}>
-            <p className="text-2xl font-bold font-headline mt-10" style={{color: 'hsl(var(--primary-foreground))'}}>Press Space to Start</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center">
+            <p className="text-2xl font-bold font-headline mt-10" style={{color: 'hsl(var(--primary-foreground))'}}>Tap to Start</p>
         </div>
       )}
 
